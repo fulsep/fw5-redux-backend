@@ -1,9 +1,12 @@
 const jwt = require('jsonwebtoken');
+const user = require('../dummyDB/users');
 
 exports.login = (req, res)=>{
     const {email, password} = req.body;
-    if(email === 'admin@mail.com' && password === '1234'){
-        const token = jwt.sign({id:1}, 'secret');
+    
+    const filtered = user.filter(o => o.email === email);
+    if(filtered.length > 0 && password === '1234'){
+        const token = jwt.sign({id:filtered[0].id}, 'secret');
         return res.json({
             success: true,
             message: 'Login success!',
@@ -12,6 +15,7 @@ exports.login = (req, res)=>{
             }
         });
     }
+    
     return res.status(401).json({
         success: false,
         message: 'Wrong email or password!'
